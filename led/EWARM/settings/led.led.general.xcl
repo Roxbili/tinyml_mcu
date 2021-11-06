@@ -1,0 +1,21 @@
+"D:\software\Embedded Workbench 8.2\arm\bin\armproc.dll" 
+
+"D:\software\Embedded Workbench 8.2\arm\bin\armstlink2.dll" 
+
+"D:\project\cmsis-nn\led\EWARM\led\Exe\led.out" 
+
+--plugin="D:\software\Embedded Workbench 8.2\arm\bin\armbat.dll" 
+
+--device_macro="D:\software\Embedded Workbench 8.2\arm\config\debugger\ST\STM32F7xx.dmac" 
+
+--device_macro="D:\software\Embedded Workbench 8.2\arm\config\debugger\ST\STM32F7xx_DBG.dmac" 
+
+--device_macro="D:\software\Embedded Workbench 8.2\arm\config\debugger\ST\STM32F7xx_OB.dmac" 
+
+--device_macro="D:\software\Embedded Workbench 8.2\arm\config\debugger\ST\STM32F7xx_TRACE.dmac" 
+
+--flash_loader="D:\software\Embedded Workbench 8.2\arm\config\flashloader\ST\FlashSTM32F74xxG.board" 
+
+
+
+

@@ -110,7 +110,8 @@ int main(void)
     // pooling_demo();
     // relu_demo();
     // conv_demo();
-    dense_demo();
+    // dense_demo();
+    basic_func_demo();
 		HAL_Delay(100);
   }
   /* USER CODE END 3 */

@@ -74,20 +74,20 @@ arm_status arm_fully_connected_q7(const q7_t *pV,
                                   q7_t *pOut,
                                   q15_t *vec_buffer)
 {
-// #define ARM_MATH_DSP 1  // 只是为了查看方便，平时运行务必注释或者删除
 
+// #define ARM_MATH_DSP 1  // 只是为了查看方便，define也是随便写的，平时运行务必注释或者删除
 #if defined(ARM_MATH_DSP)
     /* Run the following code for Cortex-M4 and Cortex-M7 */
 
-    const q7_t *pB = pM;
+    const q7_t *pB = pM;    // 指向权重的指针
     const q7_t *pB2;
-    q7_t *pO = pOut;
-    const q7_t *pBias = bias;
+    q7_t *pO = pOut;        // 指向输出的指针
+    const q7_t *pBias = bias;   // 指向bias
     const q15_t *pA;
-    uint16_t rowCnt = num_of_rows >> 1;
+    uint16_t rowCnt = num_of_rows >> 1;     // 右移是除以2吧
 
     /* expand the vector into the buffer */
-    arm_q7_to_q15_reordered_no_shift(pV, vec_buffer, dim_vec);
+    arm_q7_to_q15_reordered_no_shift(pV, vec_buffer, dim_vec);  // 这个reordered含义有点弄不清楚
 
     while (rowCnt)
     {
@@ -176,18 +176,21 @@ arm_status arm_fully_connected_q7(const q7_t *pV,
     }
 
 #else
+    // 矩阵向量乘法
     (void)vec_buffer;
     int i, j;
 
     /* Run the following code as reference implementation for Cortex-M0 and Cortex-M3 */
     for (i = 0; i < num_of_rows; i++)
     {
+        // 量化方法从根本上就和tensorflow不一样，这里使用的是Qm.n格式的定点数量化
+        // 加法前半部分是本身就需要的，后半部分在最后右移的时候相当于0，那么这部分本身就相当于不存在
         int ip_out = ((q31_t)(bias[i]) << bias_shift) + NN_ROUND(out_shift);
         for (j = 0; j < dim_vec; j++)
         {
-            ip_out += pV[j] * pM[i * dim_vec + j];
+            ip_out += pV[j] * pM[i * dim_vec + j];  // 这里是正常的向量乘加
         }
-        pOut[i] = (q7_t)__SSAT((ip_out >> out_shift), 8);
+        pOut[i] = (q7_t)__SSAT((ip_out >> out_shift), 8);   // __SSAT把一个数值截断，这里是截断成8bit
     }
 
 #endif /* ARM_MATH_DSP */

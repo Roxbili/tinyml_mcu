@@ -1,4 +1,5 @@
 #include "nn_ops_demo.h"    // 当这个文件同文件函数的时候就会需要了
+#include "arm_nnsupportfunctions.h"
 #include "stdio.h"
 
 void show_vector(q7_t* vec, const int size) {
@@ -114,4 +115,10 @@ void dense_demo() {
 
     printf("Output vector: ");
     show_vector(out_vec, sizeof(out_vec));
+}
+
+void basic_func_demo() {
+    uint16_t out_shift = 9;
+    uint16_t new_shift = NN_ROUND(out_shift);
+    printf("%d\r\n", new_shift);
 }

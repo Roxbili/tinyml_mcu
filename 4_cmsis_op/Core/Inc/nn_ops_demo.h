@@ -7,3 +7,4 @@ void pooling_demo();
 void relu_demo();
 void conv_demo();
 void dense_demo();
+void basic_func_demo();

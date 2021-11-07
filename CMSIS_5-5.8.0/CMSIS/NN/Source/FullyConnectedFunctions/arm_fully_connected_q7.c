@@ -74,6 +74,7 @@ arm_status arm_fully_connected_q7(const q7_t *pV,
                                   q7_t *pOut,
                                   q15_t *vec_buffer)
 {
+// #define ARM_MATH_DSP 1  // 只是为了查看方便，平时运行务必注释或者删除
 
 #if defined(ARM_MATH_DSP)
     /* Run the following code for Cortex-M4 and Cortex-M7 */

@@ -118,7 +118,125 @@ void dense_demo() {
 }
 
 void basic_func_demo() {
-    uint16_t out_shift = 9;
-    uint16_t new_shift = NN_ROUND(out_shift);
-    printf("%d\r\n", new_shift);
+    q31_t m1 = 1;
+    q31_t m2 = 100;
+    q31_t result = arm_nn_doubling_high_mult_no_sat(m1, m2);
+    printf("%d\r\n", result);
+}
+
+void pooling_s8_demo() {
+    // The function returns required buffer size in bytes
+    // int32_t buffer_size = arm_avgpool_s8_get_buffer_size(2, 2);
+    // printf("%d\r\n", buffer_size);   // 8
+
+    // 构造context (max pool里根本不会用到)
+    cmsis_nn_context context;
+    // q7_t buffer[8] = {0};
+    // context.buf = buffer;
+    // context.size = buffer_size;
+
+    // 构造参数
+    cmsis_nn_pool_params pool_params;
+    cmsis_nn_tile stride, padding;
+    cmsis_nn_activation activation_range;
+    stride.w = 2, stride.h = 2;
+    padding.w = 0, padding.h = 0;
+    activation_range.min = -128, activation_range.max = 127;
+    pool_params.stride = stride;
+    pool_params.padding = padding;
+    pool_params.activation = activation_range;
+
+    // 维度信息
+    cmsis_nn_dims input_dims, filter_dims, output_dims;
+    input_dims.h = 4, input_dims.w = 4, input_dims.c = 2;
+    filter_dims.h = 2, filter_dims.w = 2;
+    output_dims.h = 2, output_dims.w = 2, output_dims.c = 2;
+
+    // 数据
+    q7_t input_data[] = {-1, -1, 0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 5, 5, 4, 4,
+                    7, 7, 0, 0, 0, 0, 0, 0, -1, -1, -2, -2, 0, 0, 9, 9};
+    q7_t output_data[20] = {0};
+
+    arm_status ret = arm_max_pool_s8(&context, &pool_params,
+                        &input_dims, input_data, &filter_dims,
+                        &output_dims, output_data);
+    if (ret != ARM_MATH_SUCCESS) {
+        printf("Error\r\n");
+        return;
+    }
+
+    show_vector(output_data, sizeof(output_data));
+}
+
+void dense_s8_demo() {
+    // 维度信息
+    cmsis_nn_dims input_dims, filter_dims, bias_dims, output_dims;
+    input_dims.n = 2, input_dims.h = 1, input_dims.w = 5, input_dims.c = 1;
+    filter_dims.n = 5, filter_dims.c = 3;
+    bias_dims.c = 3;
+    output_dims.n = 2, output_dims.c = 3;
+
+    // context
+    // The function returns required buffer size in bytes
+    int32_t buffer_size = arm_fully_connected_s8_get_buffer_size(&filter_dims);
+    // printf("%d\r\n", buffer_size);   // 0，不需要额外的内存
+
+    // 量化参数
+    // 无量化版本
+    cmsis_nn_fc_params fc_params;
+    fc_params.input_offset = 0;
+    fc_params.filter_offset = 0;
+    fc_params.output_offset = 0;
+    cmsis_nn_activation activation_range;
+    activation_range.min = -128;
+    activation_range.max = 127;
+    fc_params.activation = activation_range;
+
+    cmsis_nn_per_tensor_quant_params quant_params;
+    quant_params.multiplier = 1;
+    quant_params.shift = 0;
+
+    // 数据
+    q7_t input_data[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+    q7_t filter_data[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+    int32_t bias_data[] = {1, 1, 1};
+    q7_t output_data[10] = {0};
+    // memset(output_data, 1, sizeof(output_data));
+
+    arm_status ret = arm_fully_connected_s8(NULL, &fc_params, &quant_params,
+                        &input_dims, input_data, &filter_dims,
+                        filter_data, &bias_dims, bias_data,
+                        &output_dims, output_data);
+    if (ret != ARM_MATH_SUCCESS) {
+        printf("Error\r\n");
+        return;
+    }
+
+    show_vector(output_data, sizeof(output_data));
+}
+
+void vec_mat_mult_s8_demo() {
+    // 输入设置
+    q7_t lhs[] = {1, 2, 1, 1, 1};
+    // q7_t rhs[] = {10, 10, 30, 10, 10, 10, 20, 20, 20, 20, 5, 20, 30, 5, 30};
+    q7_t rhs[] = {10, 10, 20, 20, 30, 10, 10, 20, 5, 5, 30, 10, 20, 20, 30};
+    q31_t bias[] = {0, 0, 0};
+    q7_t dst[10] = {0};
+
+    int32_t lhs_offset = 0, rhs_offset = 0, dst_offset = 0;
+    int32_t multiplier = (1 << 31) - 1, shift = 0;    // 无量化版本
+    // int32_t multiplier = 1717986918, shift = -4;    // 量化版本
+    int32_t rhs_cols = 5, rhs_rows = 3;
+    int32_t activation_min = -128, activation_max = 127;
+
+    arm_status ret = arm_nn_vec_mat_mult_t_s8(lhs, rhs, bias, dst,
+                        lhs_offset, rhs_offset, dst_offset,
+                        multiplier, shift, rhs_cols, rhs_rows,
+                        activation_min, activation_max);
+    if (ret != ARM_MATH_SUCCESS) {
+        printf("Error\r\n");
+        return;
+    }
+
+    show_vector(dst, sizeof(dst));
 }

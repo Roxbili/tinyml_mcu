@@ -60,6 +60,7 @@ arm_status arm_nn_vec_mat_mult_t_s8(const q7_t *lhs,
                                     const int32_t activation_max)
 {
     (void)rhs_offset;
+#undef ARM_MATH_DSP // 为了调试方便，先用最简单的版本
 #if defined(ARM_MATH_MVEI)
     int32_t row_loop_cnt = rhs_rows / 3;
 
@@ -223,9 +224,12 @@ arm_status arm_nn_vec_mat_mult_t_s8(const q7_t *lhs,
             acc_1 += lhs_temp * (*rhs_1);
             rhs_1++;
         }
+        // printf("acc_0: %d, acc_1: %d\r\n", acc_0, acc_1);
+        // printf("dst_multiplier: %d, dst_shift: %d\r\n", dst_multiplier, dst_shift);
 
         acc_0 = arm_nn_requantize(acc_0, dst_multiplier, dst_shift);
         acc_1 = arm_nn_requantize(acc_1, dst_multiplier, dst_shift);
+        // printf("acc_0 quant: %d, acc_1 quant: %d\r\n", acc_0, acc_1);
 
         // Add offset
         acc_0 += dst_offset;
@@ -305,6 +309,7 @@ arm_status arm_nn_vec_mat_mult_t_s8(const q7_t *lhs,
             res01 = *bias++;
             res02 = *bias++;
         }
+        // printf("res00: %d, res01: %d, res02: %d\r\n", res00, res01, res02);
         for (int32_t rhs_cols_idx = 0; rhs_cols_idx < rhs_cols; ++rhs_cols_idx)
         {
             const q31_t rhs_value0 = (int8_t)*rhs_ptr_0;
@@ -321,6 +326,7 @@ arm_status arm_nn_vec_mat_mult_t_s8(const q7_t *lhs,
             ++rhs_ptr_2;
             ++lhs_ptr;
         }
+        // printf("res00: %d, res01: %d, res02: %d\r\n", res00, res01, res02);
         // Quantize down
         res00 = arm_nn_requantize(res00, dst_multiplier, dst_shift);
         res01 = arm_nn_requantize(res01, dst_multiplier, dst_shift);

@@ -182,24 +182,30 @@ void dense_s8_demo() {
     // printf("%d\r\n", buffer_size);   // 0，不需要额外的内存
 
     // 量化参数
-    // 无量化版本
     cmsis_nn_fc_params fc_params;
-    fc_params.input_offset = 0;
+    fc_params.input_offset = 1;     // 这就是直接在input上+1
     fc_params.filter_offset = 0;
-    fc_params.output_offset = 0;
+    fc_params.output_offset = 2;    // 这就是在最后的结果上直接+2
     cmsis_nn_activation activation_range;
     activation_range.min = -128;
     activation_range.max = 127;
     fc_params.activation = activation_range;
 
     cmsis_nn_per_tensor_quant_params quant_params;
-    quant_params.multiplier = 1;
-    quant_params.shift = 0;
+    // 无量化版本
+    // quant_params.multiplier = (1 << 31) - 1;
+    // quant_params.shift = 0;
+
+    // 量化版本
+    quant_params.multiplier = 1717986918;
+    quant_params.shift = -4;
+
 
     // 数据
-    q7_t input_data[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
-    q7_t filter_data[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
-    int32_t bias_data[] = {1, 1, 1};
+    q7_t input_data[] = {1, 2, 1, 1, 1, -1, -2, -1, -1, -1};
+    // q7_t filter_data[] = {10, 10, 30, 10, 10, 10, 20, 20, 20, 20, 5, 20, 30, 5, 30};
+    q7_t filter_data[] = {10, 10, 20, 20, 30, 10, 10, 20, 5, 5, 30, 10, 20, 20, 30};
+    int32_t bias_data[] = {0, 0, 0};
     q7_t output_data[10] = {0};
     // memset(output_data, 1, sizeof(output_data));
 

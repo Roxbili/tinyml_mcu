@@ -113,8 +113,8 @@ int main(void)
     // dense_demo();
     // basic_func_demo();
     // pooling_s8_demo();
-    vec_mat_mult_s8_demo();
-    // dense_s8_demo();
+    // vec_mat_mult_s8_demo();
+    dense_s8_demo();
 		HAL_Delay(100);
   }
   /* USER CODE END 3 */

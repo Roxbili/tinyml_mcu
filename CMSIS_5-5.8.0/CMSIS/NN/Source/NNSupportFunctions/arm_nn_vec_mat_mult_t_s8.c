@@ -60,7 +60,7 @@ arm_status arm_nn_vec_mat_mult_t_s8(const q7_t *lhs,
                                     const int32_t activation_max)
 {
     (void)rhs_offset;
-#undef ARM_MATH_DSP // 为了调试方便，先用最简单的版本
+// #undef ARM_MATH_DSP // 为了调试方便，先用最简单的版本
 #if defined(ARM_MATH_MVEI)
     int32_t row_loop_cnt = rhs_rows / 3;
 

@@ -61,6 +61,8 @@ output_q = (val * multiplier) / (2^shift) + output_zero_point
 
 其中，`multiplier`和`shift`都是整型，实现了浮点数到整型的转换。
 
+*需要注意的是，量化的时候relu操作一般都fuse到网络中了，通过clip就实现了relu，因此量化推理不需要额外进行relu*
+
 ### 注意！
 CMSIS-NE底层调用的反量化函数`arm_nn_requantize`有三个参数：`val, multipler, shift`。
 

@@ -24,7 +24,9 @@
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
 #include "arm_nnfunctions.h"
-#include "nn_ops_demo.h"
+#include "model.h"
+#include "utils.h"
+#include "inputs.h"
 
 /* USER CODE END Includes */
 
@@ -107,14 +109,13 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    // pooling_demo();
-    // relu_demo();
-    // conv_demo();
-    // dense_demo();
-    // basic_func_demo();
-    // pooling_s8_demo();
-    // vec_mat_mult_s8_demo();
-    dense_s8_demo();
+    q7_t buffer1[784] = INPUT_DATA;
+    q7_t buffer2[120] = {0};
+    mlp(buffer1, buffer2);
+
+    int max_index = get_vector_max_index(buffer1, 10, 1);
+    // printf("label: %d\r\n", max_index);
+
 		HAL_Delay(100);
   }
   /* USER CODE END 3 */

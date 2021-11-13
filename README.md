@@ -70,6 +70,5 @@ command + shift + p: c/c++ edit config
 
 # TODO
 
-TFLite针对weight是零点为0，但是针对input、output零点范围是[-128,127]的（[链接](https://tensorflow.google.cn/lite/performance/quantization_spec?hl=zh-cn)）
-
-因此，需要修改卷积啥的接口，在里面添加对应的零点偏移量化处理，让推理能够正常进行。实际上应该加一个input_zero_point和一个output_zero_point就行。
+- [ ] gen_code.py: 用于自动生成c模型代码。
+    需要解析.tflite模型格式，目前看到的方案可以用flatbuffer转成json，然后解析json文件格式。[参考链接](https://blog.csdn.net/u010580016/article/details/104035135)

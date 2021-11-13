@@ -1,4 +1,4 @@
-#include "nn_ops_demo.h"    // 当这个文件同文件函数的时候就会需要了
+#include "nn_ops_demo.h"    // 当这个文件调用同文件函数的时候就会需要了
 #include "arm_nnsupportfunctions.h"
 #include "stdio.h"
 

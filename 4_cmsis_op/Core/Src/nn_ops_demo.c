@@ -246,3 +246,9 @@ void vec_mat_mult_s8_demo() {
 
     show_vector(dst, sizeof(dst));
 }
+
+void erf_demo(float32_t* data, float32_t* output) {
+    for (int i = 0; i < 4; i++) {
+        output[i] = erff(data[i]);  // erff用于浮点32位的，erf用于64位的
+    }
+}

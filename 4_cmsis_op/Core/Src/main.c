@@ -114,7 +114,17 @@ int main(void)
     // basic_func_demo();
     // pooling_s8_demo();
     // vec_mat_mult_s8_demo();
-    dense_s8_demo();
+    // dense_s8_demo();
+
+    // erf test
+    float32_t data[] = {0.5, 1.0, 2.0, 3.0};
+    float32_t output[4] = {0}; 
+    erf_demo(data, output);
+    for (int i = 0; i < 4; i++) {
+      printf("%f ", output[i]);
+    }
+    printf("\r\n");
+
 		HAL_Delay(100);
   }
   /* USER CODE END 3 */

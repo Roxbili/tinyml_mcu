@@ -12,3 +12,5 @@ void basic_func_demo();
 void pooling_s8_demo();
 void dense_s8_demo();
 void vec_mat_mult_s8_demo();
+
+void erf_demo();

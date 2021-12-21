@@ -8,13 +8,25 @@ UART可以参考YouTube那个印度人的教学视频。
 
 # Keil
 
+## 代码优化
+1. options for target...(打开该设置窗口)
+2. C/C++: optimization Level 3
+3. C/C++: One ELF Section per Function
+4. Target->Code generation: Use Cross-Module Optimization, Use MicroLIB
+
 ## 调试技巧
+**该方法会增加代码占用，所以在实际部署的时候需要将优化开回来。**
+
 编译器优化级别高的时候，编译器为了优化，会优化变量内存分配，导致调试的时候无法看到局部变量的值(`not in scope`)
 
 调整编译器优化级别便于调试：
 1. options for target...
 2. C/C++栏目
 3. Opitmization: 从Level 3调整至Level 0
+
+## 查看内存占用
+双击左侧Project下一行的工程名字：uartRev1，打开map  
+(如果打不开需要去options for target里的Listing重新设置一下路径: Select Folder for listing)
 
 ## CMSIS
 手动添加CMSIS记得把path加到c++的项目里面，还需要把cubeMX生成的CMSIS路径都给换到自己的CMSIS库中，可能因为版本不一致导致include的问题。

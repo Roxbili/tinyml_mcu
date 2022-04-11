@@ -174,7 +174,7 @@ arm_status arm_nn_vec_mat_mult_t_s8(const q7_t *lhs,
 
     const int16_t lhs_offset_s16 = (int16_t)lhs_offset;
 
-    const uint32_t lhs_offset_s16x2 = __PKHBT(lhs_offset_s16, lhs_offset_s16, 16);
+    const uint32_t lhs_offset_s16x2 = __PKHBT(lhs_offset_s16, lhs_offset_s16, 16);  // 将两个16位的offset组合成一个新的，前16bit = 后16bit
 
     for (int32_t i = 0; i < row_loop_cnt; i++)
     {
@@ -190,21 +190,21 @@ arm_status arm_nn_vec_mat_mult_t_s8(const q7_t *lhs,
 
         const int8_t *lhs_vec = lhs;
         const int8_t *rhs_0 = rhs;
-        const int8_t *rhs_1 = rhs + rhs_cols;
-        rhs += 2 * rhs_cols;
+        const int8_t *rhs_1 = rhs + rhs_cols;   // 下一行相同列对应的元素
+        rhs += 2 * rhs_cols;    // rhs指针向下移动两行，因为前两行的指针都已经准备好了
 
-        for (int j = col_loop_cnt; j != 0; j--)
+        for (int j = col_loop_cnt; j != 0; j--) // 4列为1组，这里1组1组遍历
         {
-            int32_t vec_0 = arm_nn_read_q7x4_ia(&lhs_vec);
-            int32_t vec_1 = __SXTAB16_RORn(lhs_offset_s16x2, (uint32_t)vec_0, 8);
+            int32_t vec_0 = arm_nn_read_q7x4_ia(&lhs_vec);  // 取4个q7元素
+            int32_t vec_1 = __SXTAB16_RORn(lhs_offset_s16x2, (uint32_t)vec_0, 8);   // 取出的4个元素看成u32bit，循环右移8位，其实就是取4个元素中0、2号位
 
-            vec_0 = __SXTAB16(lhs_offset_s16x2, vec_0);
+            vec_0 = __SXTAB16(lhs_offset_s16x2, vec_0); // 取4个元素中1、3号位
 
             int32_t ker_0 = arm_nn_read_q7x4_ia(&rhs_0);
-            int32_t ker_1 = __SXTB16_RORn((uint32_t)ker_0, 8);
+            int32_t ker_1 = __SXTB16_RORn((uint32_t)ker_0, 8);  // 取kernel方法同上
             ker_0 = __SXTB16(ker_0);
 
-            acc_0 = __SMLAD(ker_1, vec_1, acc_0);
+            acc_0 = __SMLAD(ker_1, vec_1, acc_0);   // 乘加操作
             acc_0 = __SMLAD(ker_0, vec_0, acc_0);
 
             ker_0 = arm_nn_read_q7x4_ia(&rhs_1);

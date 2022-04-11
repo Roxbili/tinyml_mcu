@@ -506,8 +506,8 @@ __STATIC_FORCEINLINE q31_t arm_nn_read_q15x2_ia(const q15_t **in_q15)
 __STATIC_FORCEINLINE q31_t arm_nn_read_q7x4_ia(const q7_t **in_q7)
 {
     q31_t val;
-    memcpy(&val, *in_q7, 4);
-    *in_q7 += 4;
+    memcpy(&val, *in_q7, 4);    // 复制4个字节
+    *in_q7 += 4;                // 将指针右移4个元素
 
     return (val);
 }
